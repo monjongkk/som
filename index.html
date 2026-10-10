@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>อาณาจักรสระประสม : ผจญภัยพิชิตคำไทย</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- ฟอนต์ (ถ้าออฟไลน์จะใช้ฟอนต์สำรองของเครื่องอัตโนมัติ) -->
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;700&family=Sarabun:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app" data-theme="start">
+
+  <!-- ฉากหลัง -->
+  <div id="bg" aria-hidden="true">
+    <div class="sun"></div>
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
+    <div class="cloud c3"></div>
+    <div id="sparkles"></div>
+    <div id="props"></div>
+    <div class="hills">
+      <div class="hill h1"></div>
+      <div class="hill h2"></div>
+      <div class="hill h3"></div>
+    </div>
+  </div>
+
+  <!-- ปุ่มเปิด-ปิดเสียง -->
+  <button id="btnSound" class="sound-btn" aria-label="เปิดหรือปิดเสียง" title="เปิด/ปิดเสียง">🔊</button>
+
+  <!-- แถบสถานะผู้เล่น -->
+  <header id="hud" class="hud hidden">
+    <div class="hud-player">
+      <span class="hud-avatar">🧒</span>
+      <div class="hud-name"><b id="hudName">นักผจญภัย</b><small>Lv.<span id="hudLv">1</span></small></div>
+    </div>
+    <div class="hud-exp">
+      <div class="bar"><i id="expBar"></i></div>
+      <small id="expText">EXP 0/100</small>
+    </div>
+    <div class="hud-stat" title="คะแนน">⭐ <b id="hudScore">0</b></div>
+    <div class="hud-stat" title="เหรียญ">🪙 <b id="hudCoins">0</b></div>
+    <div class="hud-hearts hidden" id="hudHearts" title="พลังชีวิต"></div>
+  </header>
+
+  <main>
+
+    <!-- ===== หน้าแรก ===== -->
+    <section id="screen-start" class="screen active">
+      <div class="start-hero">
+        <span class="gem g1">💎</span><span class="gem g2">🪙</span><span class="gem g3">✨</span><span class="gem g4">💎</span>
+        <div class="hero-big" data-hero></div>
+      </div>
+      <div class="logo">
+        <div class="logo-small">✨ ยินดีต้อนรับสู่ ✨</div>
+        <h1>อาณาจักรสระประสม</h1>
+        <div class="ribbon">ผจญภัยพิชิตคำไทย</div>
+        <div class="logo-sub">เกมฝึกอ่าน เอีย • เอือ • อัว สำหรับ ป.1–3</div>
+      </div>
+      <div class="panel start-panel">
+        <p id="welcomeBack" class="hint hidden"></p>
+        <label for="playerName">ชื่อนักผจญภัย</label>
+        <input id="playerName" type="text" maxlength="20" placeholder="พิมพ์ชื่อของหนูที่นี่" autocomplete="off">
+        <button id="btnStart" class="btn btn-gold">⚔️ เริ่มภารกิจ</button>
+        <div class="row">
+          <button id="btnHow" class="btn btn-blue small">📖 วิธีเล่น</button>
+          <button id="btnReset" class="btn btn-red small">🗑️ เริ่มใหม่</button>
+        </div>
+      </div>
+      <footer class="credit">🎓 จัดทำโดย ครูจองซ่า</footer>
+    </section>
+
+    <!-- ===== แผนที่ ===== -->
+    <section id="screen-map" class="screen">
+      <div class="top-actions">
+        <button id="btnMapHome" class="btn btn-blue small">🏠 หน้าแรก</button>
+        <div id="mapProgress" class="chip">ผ่านแล้ว 0/4 ด่าน</div>
+      </div>
+      <h2 class="screen-title">🗺️ แผนที่อาณาจักรสระประสม</h2>
+      <div class="map-board panel">
+        <svg class="map-path" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M14 74 C 22 40, 30 30, 38 34 S 52 72, 62 70 S 78 26, 86 30" />
+        </svg>
+        <div id="mapNodes"></div>
+      </div>
+      <p class="hint center">แตะที่ด่านเพื่อออกผจญภัย • ผ่านด่านก่อนหน้าเพื่อปลดล็อกด่านถัดไป</p>
+    </section>
+
+    <!-- ===== บทสนทนา / เรียนรู้ก่อนเข้าด่าน ===== -->
+    <section id="screen-learn" class="screen">
+      <div class="top-actions">
+        <button id="btnLearnBack" class="btn btn-blue small">🗺️ แผนที่</button>
+      </div>
+      <h2 id="learnTitle" class="screen-title"></h2>
+      <div class="stage-scene">
+        <div class="char" data-hero></div>
+        <div class="char fairy">🧚</div>
+      </div>
+      <div class="dialog panel">
+        <div class="dlg-who"><span id="dlgAvatar" class="dlg-avatar">🧚</span><b id="dlgName">นางฟ้าอักษร</b></div>
+        <p id="dlgText"></p>
+        <div class="dlg-btns">
+          <button id="btnSkip" class="btn btn-ghost small">ข้าม ⏭️</button>
+          <button id="btnDlgNext" class="btn btn-gold small">ถัดไป ▶</button>
+        </div>
+      </div>
+      <div id="learnCard" class="panel learn-card hidden">
+        <div id="learnBadge" class="vow-badge"></div>
+        <p id="learnTip"></p>
+        <div class="hint center">👆 แตะที่คำเพื่อฟังเสียงอ่าน</div>
+        <div id="learnTiles" class="tiles"></div>
+        <button id="btnStartStage" class="btn btn-gold">⚔️ เริ่มภารกิจ</button>
+      </div>
+    </section>
+
+    <!-- ===== หน้าต่อสู้ / ตอบคำถาม ===== -->
+    <section id="screen-battle" class="screen">
+      <div class="top-actions">
+        <button id="btnQuit" class="btn btn-blue small">🗺️ ออกจากด่าน</button>
+        <div id="battleTitle" class="chip"></div>
+      </div>
+      <div class="progress-wrap">
+        <div class="bar"><i id="progBar"></i></div>
+        <small id="progText">ข้อ 1/10</small>
+      </div>
+      <div class="arena" id="arena">
+        <div class="fighter hero-fighter" id="heroFighter" data-hero></div>
+        <div class="fighter guardian" id="guardian">🐛</div>
+        <div class="gname" id="gname"></div>
+      </div>
+      <div class="qcard panel">
+        <div id="qType" class="qtype"></div>
+        <div id="qText" class="qtext"></div>
+        <div id="qBig" class="qbig"></div>
+        <button id="btnSpeakQ" class="btn btn-ghost small hidden">🔊 ฟังเสียง</button>
+        <div id="options" class="options"></div>
+        <div id="feedback" class="feedback hidden">
+          <div id="fbTitle" class="fb-title"></div>
+          <div id="fbText" class="fb-text"></div>
+          <button id="btnNext" class="btn btn-gold">ต่อไป ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== สรุปผลด่าน ===== -->
+    <section id="screen-result" class="screen">
+      <div class="panel result-panel">
+        <div class="chest">🎁</div>
+        <h2 id="resTitle"></h2>
+        <div id="resStars" class="stars big"></div>
+        <ul id="resList" class="res-list"></ul>
+        <div class="btn-col">
+          <button id="btnResNext" class="btn btn-gold">ด่านต่อไป ▶</button>
+          <button id="btnResRetry" class="btn btn-blue">🔁 เล่นด่านนี้อีกครั้ง</button>
+          <button id="btnResMap" class="btn btn-green">🗺️ กลับแผนที่</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== จบเกม : สรุปคะแนนและใบประกาศ ===== -->
+    <section id="screen-final" class="screen">
+      <div class="panel final-panel">
+        <h2>🏆 สรุปผลแบบทดสอบท้ายเกม</h2>
+        <div class="final-score"><span id="finScore">0</span><small>/20</small></div>
+        <div id="finStars" class="stars big"></div>
+        <p id="finMsg" class="fin-msg"></p>
+        <div id="finBreak" class="breakdown"></div>
+        <div class="mini-stats">
+          <span>⭐ คะแนนรวม <b id="finTotalScore">0</b></span>
+          <span>🪙 เหรียญ <b id="finCoins">0</b></span>
+          <span>🎖️ Lv.<b id="finLv">1</b></span>
+        </div>
+      </div>
+
+      <div id="certificate" class="certificate">
+        <div class="cert-inner">
+          <div class="cert-top">🏅</div>
+          <div class="cert-title">ใบประกาศเกียรติบัตร</div>
+          <div class="cert-line">ขอมอบให้</div>
+          <div id="certName" class="cert-name">นักผจญภัย</div>
+          <div class="cert-line">ได้ผจญภัยพิชิตคำไทยในเกม</div>
+          <div class="cert-game">“อาณาจักรสระประสม : ผจญภัยพิชิตคำไทย”</div>
+          <div class="cert-line">ได้คะแนนแบบทดสอบ <b id="certScore">0</b> จาก 20 คะแนน</div>
+          <div id="certRank" class="cert-rank"></div>
+          <div class="cert-foot">
+            <span id="certDate"></span>
+            <span>จัดทำโดย ครูจองซ่า</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-col">
+        <button id="btnPrint" class="btn btn-gold">🖨️ พิมพ์ / บันทึกใบประกาศ</button>
+        <button id="btnFinRetry" class="btn btn-blue">🔁 ทำแบบทดสอบอีกครั้ง</button>
+        <button id="btnFinMap" class="btn btn-green">🗺️ กลับแผนที่</button>
+        <button id="btnFinHome" class="btn btn-ghost">🏠 หน้าแรก</button>
+      </div>
+      <footer class="credit">🎓 จัดทำโดย ครูจองซ่า</footer>
+    </section>
+
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- กล่องข้อความ -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-box">
+      <h3 id="modalTitle"></h3>
+      <div id="modalBody" class="modal-body"></div>
+      <div id="modalBtns" class="modal-btns"></div>
+    </div>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
